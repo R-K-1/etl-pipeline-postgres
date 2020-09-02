@@ -5,6 +5,7 @@ import json
 import pandas as pd
 from sql_queries import *
 
+artist_ids = set()
 
 def process_song_file(cur, filepath):
     # open song file
@@ -12,18 +13,27 @@ def process_song_file(cur, filepath):
     with open(filepath) as f:
         df = json.load(f)
 
+    artist_id = df['artist_id']
+
     # insert song record
     song_data = []
     song_data.append(df['song_id'])
     song_data.append(df['title'])
-    song_data.append(df['artist_id'])
+    song_data.append(artist_id)
     song_data.append(df['year'])
     song_data.append(df['duration'])
     cur.execute(song_table_insert, song_data)
     
     # insert artist record
-    # artist_data = 
-    # cur.execute(artist_table_insert, artist_data)
+    if not artist_id in artist_ids:
+        artist_ids.add(artist_id)
+        artist_data = []
+        artist_data.append(artist_id)
+        artist_data.append(df['artist_name'])
+        artist_data.append(df['artist_location'])
+        artist_data.append(df['artist_latitude'])
+        artist_data.append(df['artist_longitude'])
+        cur.execute(artist_table_insert, artist_data)
 
 
 def process_log_file(cur, filepath):
