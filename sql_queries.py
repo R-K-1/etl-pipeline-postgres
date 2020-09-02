@@ -54,7 +54,13 @@ artist_table_create = ("""
 
 time_table_create = ("""
     CREATE TABLE time (
-        code char(5)
+        start_time TIMESTAMP NOT NULL,
+        hour VARCHAR(2),
+        day VARCHAR(15),
+        week VARCHAR(15),
+        month VARCHAR(15),
+        year INT,
+        weekday VARCHAR(15)
     );
 """)
 
