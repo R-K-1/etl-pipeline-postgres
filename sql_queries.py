@@ -44,7 +44,11 @@ song_table_create = ("""
 
 artist_table_create = ("""
     CREATE TABLE artists (
-        code char(5)
+        artist_id VARCHAR(20) PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        location VARCHAR(100),
+        latitude REAL,
+        longitude REAL
     );
 """)
 
