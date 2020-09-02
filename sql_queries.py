@@ -24,7 +24,11 @@ songplay_table_create = ("""
 
 user_table_create = ("""
     CREATE TABLE users (
-        code char(5)
+        user_id INT PRIMARY KEY,
+        first_name  VARCHAR(20),
+        last_name  VARCHAR(20),
+        gender  VARCHAR(1),
+        level VARCHAR(10) NOT NULL
     );
 """)
 
