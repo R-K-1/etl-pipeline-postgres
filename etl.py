@@ -1,43 +1,51 @@
 import os
 import glob
 import psycopg2
+import json
 import pandas as pd
 from sql_queries import *
 
 
 def process_song_file(cur, filepath):
     # open song file
-    df = 
+    df = {}
+    with open(filepath) as f:
+        df = json.load(f)
 
     # insert song record
-    song_data = 
+    song_data = []
+    song_data.append(df['song_id'])
+    song_data.append(df['title'])
+    song_data.append(df['artist_id'])
+    song_data.append(df['year'])
+    song_data.append(df['duration'])
     cur.execute(song_table_insert, song_data)
     
     # insert artist record
-    artist_data = 
-    cur.execute(artist_table_insert, artist_data)
+    # artist_data = 
+    # cur.execute(artist_table_insert, artist_data)
 
 
 def process_log_file(cur, filepath):
     # open log file
-    df = 
+    df = ''
 
     # filter by NextSong action
-    df = 
+    df = ''
 
     # convert timestamp column to datetime
-    t = 
+    t = ''
     
     # insert time data records
-    time_data = 
-    column_labels = 
-    time_df = 
+    time_data = '' 
+    column_labels = ''
+    time_df = ''
 
     for i, row in time_df.iterrows():
         cur.execute(time_table_insert, list(row))
 
     # load user table
-    user_df = 
+    user_df = ''
 
     # insert user records
     for i, row in user_df.iterrows():
@@ -56,7 +64,7 @@ def process_log_file(cur, filepath):
             songid, artistid = None, None
 
         # insert songplay record
-        songplay_data = 
+        songplay_data = ''
         cur.execute(songplay_table_insert, songplay_data)
 
 
@@ -84,7 +92,7 @@ def main():
     cur = conn.cursor()
 
     process_data(cur, conn, filepath='data/song_data', func=process_song_file)
-    process_data(cur, conn, filepath='data/log_data', func=process_log_file)
+    # process_data(cur, conn, filepath='data/log_data', func=process_log_file)
 
     conn.close()
 
