@@ -6,6 +6,7 @@ import pandas as pd
 from sql_queries import *
 
 artist_ids = set()
+user_ids = set()
 
 def process_song_file(cur, filepath):
     # open song file
@@ -25,7 +26,7 @@ def process_song_file(cur, filepath):
     cur.execute(song_table_insert, song_data)
     
     # insert artist record
-    if not artist_id in artist_ids:
+    if artist_id not in artist_ids:
         artist_ids.add(artist_id)
         artist_data = []
         artist_data.append(artist_id)
@@ -38,43 +39,62 @@ def process_song_file(cur, filepath):
 
 def process_log_file(cur, filepath):
     # open log file
-    df = ''
+    df = ''    
+    with open(filepath) as f:
+        df = pd.read_json(f, lines=True)
 
     # filter by NextSong action
-    df = ''
-
-    # convert timestamp column to datetime
-    t = ''
+    df = df[df.page.eq("NextSong")]
     
-    # insert time data records
-    time_data = '' 
-    column_labels = ''
-    time_df = ''
-
-    for i, row in time_df.iterrows():
-        cur.execute(time_table_insert, list(row))
-
-    # load user table
-    user_df = ''
+    # convert timestamp column to datetime
+    df['ts'] = pd.to_datetime(df['ts'], unit='ms')
+    
+    for i, row in df.iterrows():
+        r = []
+        r.append(row.ts.time())
+        r.append(row.ts.hour)
+        r.append(row.ts.day)
+        r.append(row.ts.week)
+        r.append(row.ts.month)
+        r.append(row.ts.year)
+        r.append(row.ts.weekday())
+        cur.execute(time_table_insert, r)
 
     # insert user records
-    for i, row in user_df.iterrows():
-        cur.execute(user_table_insert, row)
+    for i, row in df.iterrows():
+        user_id = int(row.userId)
+        if user_id not in user_ids:
+            user_ids.add(user_id)
+            r = []
+            r.append(user_id)
+            r.append(row.firstName)
+            r.append(row.lastName)
+            r.append(row.gender)
+            r.append(row.level)
+            cur.execute(user_table_insert, r)
 
     # insert songplay records
-    for index, row in df.iterrows():
+    for i, row in df.iterrows():
         
         # get songid and artistid from song and artist tables
         cur.execute(song_select, (row.song, row.artist, row.length))
         results = cur.fetchone()
         
+        songid = None
+        artistid = None
         if results:
             songid, artistid = results
-        else:
-            songid, artistid = None, None
 
         # insert songplay record
-        songplay_data = ''
+        songplay_data = []
+        songplay_data.append(row.ts.time())
+        songplay_data.append(row.userId)
+        songplay_data.append(row.level)
+        songplay_data.append(songid)
+        songplay_data.append(artistid)
+        songplay_data.append(row.sessionId)
+        songplay_data.append(row.location)
+        songplay_data.append(row.userAgent)
         cur.execute(songplay_table_insert, songplay_data)
 
 
@@ -102,7 +122,7 @@ def main():
     cur = conn.cursor()
 
     process_data(cur, conn, filepath='data/song_data', func=process_song_file)
-    # process_data(cur, conn, filepath='data/log_data', func=process_log_file)
+    process_data(cur, conn, filepath='data/log_data', func=process_log_file)
 
     conn.close()
 
