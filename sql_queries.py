@@ -10,7 +10,15 @@ time_table_drop = "DROP TABLE IF EXISTS time;"
 
 songplay_table_create = ("""
     CREATE TABLE songplays (
-        code char(5)
+        songplay_id BIGSERIAL PRIMARY KEY,
+        start_time TIMESTAMP NOT NULL,
+        user_id INT NOT NULL,
+        level VARCHAR(10) NOT NULL,
+        song_id  VARCHAR(20) NOT NULL,
+        artist_id VARCHAR(20),
+        session_id INT NOT NULL,
+        location VARCHAR(100),
+        user_agent VARCHAR(200)
     );
 """)
 
