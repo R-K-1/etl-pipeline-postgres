@@ -34,7 +34,11 @@ user_table_create = ("""
 
 song_table_create = ("""
     CREATE TABLE songs (
-        code char(5)
+        song_id  VARCHAR(20) PRIMARY KEY,
+        title VARCHAR(100) NOT NULL,
+        artist_id VARCHAR(20),
+        year INT,
+        duration REAL NOT NULL
     );
 """)
 
