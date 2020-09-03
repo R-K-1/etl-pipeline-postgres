@@ -9,6 +9,17 @@ artist_ids = set()
 user_ids = set()
 
 def process_song_file(cur, filepath):
+    """
+    Description:
+        Opens a song info file, extract and persist needed information
+    
+    Parameters:
+        cur (cursor) : database cursor
+        filepath : path of song info file to be processed
+    
+    Returns:
+        nothing
+    """
     # open song file
     df = {}
     with open(filepath) as f:
@@ -38,6 +49,17 @@ def process_song_file(cur, filepath):
 
 
 def process_log_file(cur, filepath):
+    """
+    Description:
+        Opens a log file and process each record
+    
+    Parameters:
+        cur (cursor) : database cursor
+        filepath : path of log file to be processed
+    
+    Returns:
+        nothing
+    """
     # open log file
     df = ''    
     with open(filepath) as f:
@@ -99,6 +121,18 @@ def process_log_file(cur, filepath):
 
 
 def process_data(cur, conn, filepath, func):
+    """
+    Description:
+        recursively search a folder for files and execute a function on each found file
+    
+    Parameters:
+        cur (cursor) : database cursor
+        conn (connection) : connection to a database
+        filepath : path of directory to be recursively searched for log and song files
+        func (function) : function to process each found file
+    
+    Returns:
+    """
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):
@@ -118,6 +152,15 @@ def process_data(cur, conn, filepath, func):
 
 
 def main():
+    """
+    Description:
+        Establishes database connection and cursor then 
+        call functions searching for and processing info and log files
+    
+    Parameters:    
+    
+    Returns:
+    """
     conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
     cur = conn.cursor()
 
